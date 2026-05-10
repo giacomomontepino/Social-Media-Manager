@@ -1,0 +1,49 @@
+# =============================================
+# Dipendenze
+# =============================================
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+
+# =============================================
+# Credenziali — MAI su git
+# =============================================
+.env
+
+# =============================================
+# File personali — rimangono privati
+# =============================================
+.claude/context/giacomo.md
+.claude/plans/editorial-plan.md
+.claude/references/manifest.md
+
+# Screenshot personali nelle references
+.claude/references/posts/linkedin/*.PNG
+.claude/references/posts/linkedin/*.png
+.claude/references/posts/linkedin/*.jpg
+.claude/references/posts/linkedin/*.jpeg
+.claude/references/posts/x/*.PNG
+.claude/references/posts/x/*.png
+.claude/references/posts/x/*.jpg
+.claude/references/posts/x/*.jpeg
+.claude/references/posts/threads/*.PNG
+.claude/references/posts/threads/*.png
+.claude/references/posts/threads/*.jpg
+.claude/references/posts/threads/*.jpeg
+
+.claude/references/visuals/linkedin/*.PNG
+.claude/references/visuals/linkedin/*.png
+.claude/references/visuals/linkedin/*.jpg
+.claude/references/visuals/linkedin/*.jpeg
+.claude/references/visuals/x/*.PNG
+.claude/references/visuals/x/*.png
+.claude/references/visuals/x/*.jpg
+.claude/references/visuals/x/*.jpeg
+.claude/references/visuals/threads/*.PNG
+.claude/references/visuals/threads/*.png
+.claude/references/visuals/threads/*.jpg
+.claude/references/visuals/threads/*.jpeg
+
+# Settings locali Claude Code
+.claude/settings.local.json

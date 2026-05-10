@@ -1,0 +1,17 @@
+{
+  "name": "social-media-manager",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "linkedin:dry-run": "node .claude/skills/linkedin-post/scripts/publisher.js --dry-run",
+    "x:dry-run": "node .claude/skills/x-post/scripts/publisher.js --dry-run",
+    "threads:dry-run": "node .claude/skills/threads-post/scripts/publisher.js --dry-run"
+  },
+  "dependencies": {
+    "canvas": "^3.2.0",
+    "clipboardy": "^4.0.0",
+    "dotenv": "^16.4.5",
+    "pdfkit": "^0.15.0",
+    "twitter-api-v2": "^1.17.0"
+  }
+}
