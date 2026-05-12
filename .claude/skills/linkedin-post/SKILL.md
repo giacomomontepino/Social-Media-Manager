@@ -73,17 +73,20 @@ APPROVED → Fase 4 | REJECTED → ri-spawna Writer con feedback
 
 ---
 
-### FASE 4 — VISUAL (Canva MCP — obbligatorio)
+### FASE 4 — VISUAL
 
-Prima di delegare al Visual Agent, leggi `.claude/references/manifest.md` e identifica le references visual già analizzate per LinkedIn (visuals/linkedin/). Specifica se ci sono template disponibili (es. meme Drake).
+**Carosello:** modifica la sezione SLIDES in `carousel_generator.cjs`, poi esegui:
+```
+node .claude/skills/linkedin-post/scripts/carousel_generator.cjs
+```
+Output: `.claude/output/carousel/slide-01.png … slide-N.png`
 
-Spawna sub-agente con istruzioni in `.claude/agents/04-visual.md`:
-- PLATFORM: LinkedIn
-- FORMAT: [formato]
-- APPROVED_DRAFT: [draft approvato]
-- VISUAL_REFERENCES: [lista template disponibili in visuals/linkedin/ con sintesi, o "nessuno"]
+**Meme:** modifica TOP_TEXT e BOTTOM_TEXT in `meme_generator.cjs`, poi esegui:
+```
+node .claude/skills/linkedin-post/scripts/meme_generator.cjs
+```
 
-Dopo Canva: esporta design con `mcp__canva__export-design`, scarica immagine localmente.
+Prima di generare: leggi `.claude/references/manifest.md` e identifica le references visual per LinkedIn. Combina i pattern disponibili invece di replicarne uno solo (vedi `04-visual.md` sezione Evoluzione Stile).
 
 ---
 
@@ -113,8 +116,8 @@ POST LINKEDIN — [Stage] — [Data]
 ═══════════════════════════════════════════
 [POST COMPLETO]
 
-VISUAL CANVA
-[URL design o Visual Brief fallback tecnico]
+VISUAL
+[path slide generate o path meme]
 
 NOTE STRATEGICHE
 • Timing: [giorno/ora]
@@ -132,4 +135,13 @@ NOTE STRATEGICHE
 *Aggiornato automaticamente in caso di errori script.*
 
 <!-- ERRORS_START -->
+
+## 2026-05-12 — Lezioni apparse dalla prima sessione
+
+**Caption AI-sounding (rifiutata):** il primo draft della caption LinkedIn aveva una struttura troppo schematica ("Cosa trovi in questo carosello: →→→" + lista puntata). Giacomo ha rifiutato con "si capisce lontano un miglio che è generato da AI". Fix: riscrivere come narrazione in prima persona, esperienza reale, nessuna lista, tono colloquiale.
+
+**Regola anti-AI per caption LinkedIn:** evita strutture con lista frecce, sottotitoli in grassetto, "Cosa impari:", "Ecco cosa trovi:". Usa sempre un aneddoto o un momento reale come hook. Nessuna frase che suoni come "sintesi di un articolo".
+
+**Canva MCP rimosso:** ha fallito 2 volte nel replicare lo stile di riferimento. Sostituito con `carousel_generator.cjs` basato su node-canvas — più veloce, più coerente, nessuna dipendenza esterna.
+
 <!-- ERRORS_END -->

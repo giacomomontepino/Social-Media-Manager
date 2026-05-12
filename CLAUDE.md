@@ -16,7 +16,8 @@ Dettagli completi: `.claude/context/giacomo.md`
 **Target post:** developer e tech community (React Native, Expo, mobile dev).
 **Target DM outreach:** imprenditori con bisogno di un'app mobile.
 **Lingua:** italiano.
-**Funnel:** TOFU / MOFU / BOFU — 50% / 30% / 20%.
+**Funnel:** TOFU / MOFU / BOFU — 55% / 30% / 15%.
+**Piattaforme attive:** LinkedIn + Threads.
 
 ---
 
@@ -26,11 +27,11 @@ Dettagli completi: `.claude/context/giacomo.md`
 |---|---|
 | `/smm` | **Comando principale — ogni mattina.** Gestisce piano, metriche mensili, crea e pubblica contenuti del giorno |
 | `/analyze-references` | Analizza nuovi screenshot in `references/`, estrae pattern e aggiorna le skill |
-| `/dm` | DM freddo outreach clienti (LinkedIn / X / Threads) |
+| `/dm` | DM freddo outreach clienti (LinkedIn / Threads) |
 | `/linkedin-dm` | DM freddo LinkedIn con 2 varianti |
 | `/mockup-to-pdf` | Genera PDF proposta da mockup |
 
-I comandi `/linkedin-post`, `/x-post`, `/threads-post` sono sub-pipeline chiamate da `/smm`.
+I comandi `/linkedin-post`, `/threads-post` sono sub-pipeline chiamate da `/smm`.
 
 ---
 
@@ -45,20 +46,20 @@ I comandi `/linkedin-post`, `/x-post`, `/threads-post` sono sub-pipeline chiamat
 │   ├── 01-researcher.md  ← sub-agente ricerca trend
 │   ├── 02-writer.md      ← sub-agente scrittura
 │   ├── 03-reviewer.md    ← sub-agente review
-│   └── 04-visual.md      ← sub-agente Canva MCP (obbligatorio)
+│   └── 04-visual.md      ← sub-agente visual (node-canvas + Google Drive)
 ├── skills/               ← logica completa di ogni skill
 │   ├── smm/
 │   │   ├── SKILL.md      ← istruzioni orchestratore + error log
 │   │   └── scripts/plan_manager.js
 │   ├── linkedin-post/
 │   │   ├── SKILL.md      ← istruzioni + error log
-│   │   └── scripts/publisher.js       ← LinkedIn API
-│   ├── x-post/
-│   │   ├── SKILL.md
-│   │   └── scripts/publisher.js       ← X API
+│   │   └── scripts/publisher.js          ← LinkedIn API
+│   │   └── scripts/carousel_generator.cjs ← genera caroselli 1200x1200
+│   │   └── scripts/meme_generator.cjs    ← genera meme Drake
 │   ├── threads-post/
 │   │   ├── SKILL.md
-│   │   └── scripts/publisher.js       ← Threads API
+│   │   └── scripts/publisher.js          ← Threads API
+│   │   └── scripts/visual_generator.cjs  ← genera visual 1080x1080
 │   ├── dm/
 │   │   ├── SKILL.md
 │   │   └── scripts/dm_formatter.js
@@ -69,18 +70,18 @@ I comandi `/linkedin-post`, `/x-post`, `/threads-post` sono sub-pipeline chiamat
 │       ├── SKILL.md
 │       └── scripts/pdf_generator.js   ← genera PDF con pdfkit
 ├── commands/             ← thin entry points (rimandano a skills/)
-│   ├── smm.md, linkedin-post.md, x-post.md, threads-post.md
+│   ├── smm.md, linkedin-post.md, threads-post.md
 │   ├── dm.md, linkedin-dm.md, mockup-to-pdf.md
 │   └── analyze-references.md
 ├── references/           ← screenshot di post e visual da cui prendere spunto
 │   ├── README.md         ← istruzioni su come usare la cartella
 │   ├── manifest.md       ← traccia file analizzati + cosa si è imparato
-│   ├── posts/            ← screenshot post testuali (linkedin/ x/ threads/)
-│   └── visuals/          ← screenshot visual/caroselli (linkedin/ x/ threads/)
+│   ├── posts/            ← screenshot post testuali (linkedin/ threads/)
+│   └── visuals/          ← screenshot visual/caroselli (linkedin/ threads/)
 ├── plans/
 │   └── editorial-plan.md ← piano 30 giorni, persiste tra sessioni
 └── setup/
-    ├── api-credentials.md ← guida setup LinkedIn/X/Threads API
+    ├── api-credentials.md ← guida setup LinkedIn/Threads API
     └── install.sh         ← pip install dipendenze Python
 ```
 
@@ -98,7 +99,6 @@ cp .env.example .env
 
 # 3. Testa le credenziali
 node .claude/skills/linkedin-post/scripts/publisher.js --dry-run
-node .claude/skills/x-post/scripts/publisher.js --dry-run
 node .claude/skills/threads-post/scripts/publisher.js --dry-run
 ```
 
@@ -106,7 +106,7 @@ node .claude/skills/threads-post/scripts/publisher.js --dry-run
 
 ## Self-Healing
 
-Quando uno script Python fallisce, Claude:
+Quando uno script fallisce, Claude:
 1. Legge l'errore
 2. Aggiorna la sezione `## Self-Healing — Log Errori` del `SKILL.md` relativo
 3. Corregge lo script
@@ -120,22 +120,22 @@ Quando uno script Python fallisce, Claude:
 1. agents/01-researcher.md  → trend + topic raccomandato
 2. agents/02-writer.md      → draft per piattaforma
 3. agents/03-reviewer.md    → review isolata, loop max 3 iter
-4. agents/04-visual.md      → Canva MCP (obbligatorio)
+4. agents/04-visual.md      → genera visual con node-canvas
 5. skills/*/publisher.js    → pubblica via API (con conferma Giacomo)
 ```
 
 ---
 
-## Canva MCP
+## Visual Generation
 
-Configurato in `.mcp.json`. Obbligatorio per i visual — il Visual Brief è fallback solo per errori tecnici MCP.
+I visual sono generati programmaticamente con **node-canvas** (nessun tool esterno):
 
----
+| Piattaforma | Script | Dimensioni |
+|---|---|---|
+| LinkedIn carosello | `carousel_generator.cjs` | 1200x1200 px |
+| LinkedIn meme | `meme_generator.cjs` | 1200x1200 px |
+| Threads | `visual_generator.cjs` | 1080x1080 px |
 
-## Formati Visual
+**Threads:** l'API richiede URL pubblico. Flusso: genera PNG → carica su Google Drive (`drive.google.com/drive/u/1/home`) via MCP Google Drive → URL diretto `https://drive.google.com/uc?export=view&id=FILE_ID`.
 
-| Piattaforma | Dimensioni |
-|---|---|
-| LinkedIn | 1200x1200 px (carosello) |
-| X | 1600x900 px |
-| Threads | 1080x1080 px |
+**Font:** SF Pro Rounded Black/Bold/Regular — disponibile in `/Library/Fonts/`.

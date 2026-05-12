@@ -6,16 +6,17 @@
 
 ## IT: Cos'è questo progetto
 
-Un sistema **multi-agente basato su Claude Code** per automatizzare la creazione e pubblicazione di contenuti social su **LinkedIn, X (Twitter) e Threads**.
+Un sistema **multi-agente basato su Claude Code** per automatizzare la creazione e pubblicazione di contenuti social su **LinkedIn e Threads**.
 
 Non è un tool SaaS. È una configurazione di Claude Code che trasforma il tuo assistente AI in un social media manager personale, completamente personalizzato sulla tua voce e strategia.
 
 ### Cosa fa
 
-- Gestisce un **piano editoriale mensile** (30 post, distribuzione TOFU/MOFU/BOFU)
-- Ogni mattina: scegli l'argomento del giorno, scrive il testo, crea il visual su Canva, pubblica via API
+- Gestisce un **piano editoriale mensile** (distribuzione TOFU/MOFU/BOFU automatica)
+- Ogni mattina: scrivi `/smm`, lui sceglie il topic del giorno, scrive il testo, genera il visual, pubblica via API
 - **4 agenti specializzati** lavorano in sequenza: Ricercatore → Scrittore → Reviewer → Visual
-- **DM outreach** freddo su LinkedIn, X e Threads
+- **Visual generati programmaticamente** con node-canvas — nessun tool esterno, nessun account Canva
+- **DM outreach** freddo su LinkedIn e Threads
 - **Analisi delle reference**: impara dal tuo stile analizzando screenshot di post che ti piacciono
 - **Self-healing**: quando uno script fallisce, Claude lo corregge da solo e riprova
 
@@ -23,16 +24,15 @@ Non è un tool SaaS. È una configurazione di Claude Code che trasforma il tuo a
 
 | Piattaforma | Post | DM outreach | Visual |
 |---|---|---|---|
-| LinkedIn | ✅ | ✅ | ✅ Canva 1200x1200 |
-| X (Twitter) | ✅ | ✅ | ✅ Canva 1600x900 |
-| Threads | ✅ | ✅ | ✅ Canva 1080x1080 |
+| LinkedIn | ✅ | ✅ | ✅ node-canvas 1200x1200 |
+| Threads | ✅ | ✅ | ✅ node-canvas 1080x1080 |
 
 ### Prerequisiti
 
 - [Claude Code](https://claude.ai/code)
-- Account [Canva](https://canva.com) (tier gratuito sufficiente)
-- API keys per LinkedIn, X e/o Threads
+- API keys per LinkedIn e/o Threads
 - Node.js 18+
+- Account Google Drive (per hosting visual Threads — richiesto dall'API Meta Graph)
 
 ### Setup rapido
 
@@ -64,10 +64,17 @@ cp .env.example .env
 │   ├── profile.template.md  ← compila questo con il tuo profilo
 │   └── platforms.md         ← spec piattaforme (puoi lasciare invariato)
 ├── agents/                  ← 4 agenti specializzati (ricerca, scrittura, review, visual)
-├── skills/                  ← logica completa di ogni comando
+├── skills/
+│   ├── linkedin-post/
+│   │   └── scripts/
+│   │       ├── carousel_generator.cjs  ← caroselli LinkedIn 1200x1200
+│   │       └── meme_generator.cjs      ← meme Drake per post conversazionali
+│   └── threads-post/
+│       └── scripts/
+│           └── visual_generator.cjs    ← visual Threads 1080x1080
 ├── commands/                ← entry point dei comandi Claude Code
 ├── references/              ← aggiungi screenshot di post che ti piacciono
-├── plans/                   ← piano editoriale (generato automaticamente)
+├── plans/                   ← piano editoriale (generato automaticamente, ignorato da git)
 └── setup/                   ← guide API e script installazione
 ```
 
@@ -81,22 +88,33 @@ cp .env.example .env
 | `/linkedin-dm` | DM freddo LinkedIn (2 varianti A/B) |
 | `/mockup-to-pdf` | Genera PDF proposta commerciale da mockup |
 
+### Come funziona il visual
+
+I visual vengono generati con **node-canvas** direttamente in locale, senza Canva o altri tool esterni. Il sistema usa SF Pro Rounded come font (incluso in macOS).
+
+**LinkedIn:** il `carousel_generator.cjs` genera le slide in `.claude/output/carousel/` e le carica direttamente tramite LinkedIn API.
+
+**Threads:** l'API Meta Graph richiede un URL pubblico (non file locali). Il flusso è: genera PNG → carica su Google Drive via MCP Google Drive → URL diretto → publisher.
+
+Il file `carousel_generator.cjs` ha una sezione `SLIDES` che modifichi per ogni post, lasciando il render engine intatto.
+
 ---
 
 ---
 
 ## EN: What is this project
 
-A **multi-agent system built on Claude Code** to automate social media content creation and publishing on **LinkedIn, X (Twitter) and Threads**.
+A **multi-agent system built on Claude Code** to automate social media content creation and publishing on **LinkedIn and Threads**.
 
 This is not a SaaS tool. It's a Claude Code configuration that turns your AI assistant into a personal social media manager, fully customized to your voice and strategy.
 
 ### What it does
 
-- Manages a **monthly editorial plan** (30 posts, TOFU/MOFU/BOFU distribution)
-- Every morning: pick the topic, write the copy, create the Canva visual, publish via API
+- Manages a **monthly editorial plan** (automatic TOFU/MOFU/BOFU distribution)
+- Every morning: type `/smm`, it picks the topic, writes the copy, generates the visual, publishes via API
 - **4 specialized agents** work in sequence: Researcher → Writer → Reviewer → Visual
-- **Cold DM outreach** on LinkedIn, X, and Threads
+- **Visuals generated programmatically** with node-canvas — no external tools, no Canva account needed
+- **Cold DM outreach** on LinkedIn and Threads
 - **Reference analysis**: learns from your style by analyzing screenshots of posts you like
 - **Self-healing**: when a script fails, Claude fixes it and retries automatically
 
@@ -104,16 +122,15 @@ This is not a SaaS tool. It's a Claude Code configuration that turns your AI ass
 
 | Platform | Posts | DM outreach | Visuals |
 |---|---|---|---|
-| LinkedIn | ✅ | ✅ | ✅ Canva 1200x1200 |
-| X (Twitter) | ✅ | ✅ | ✅ Canva 1600x900 |
-| Threads | ✅ | ✅ | ✅ Canva 1080x1080 |
+| LinkedIn | ✅ | ✅ | ✅ node-canvas 1200x1200 |
+| Threads | ✅ | ✅ | ✅ node-canvas 1080x1080 |
 
 ### Prerequisites
 
 - [Claude Code](https://claude.ai/code)
-- [Canva](https://canva.com) account (free tier works)
-- API keys for LinkedIn, X and/or Threads
+- API keys for LinkedIn and/or Threads
 - Node.js 18+
+- Google Drive account (for Threads visual hosting — required by Meta Graph API)
 
 ### Quick start
 
@@ -145,10 +162,17 @@ cp .env.example .env
 │   ├── profile.template.md  ← fill this with your profile
 │   └── platforms.md         ← platform specs (can leave as-is)
 ├── agents/                  ← 4 specialized agents (research, writing, review, visual)
-├── skills/                  ← full logic for each command
+├── skills/
+│   ├── linkedin-post/
+│   │   └── scripts/
+│   │       ├── carousel_generator.cjs  ← LinkedIn carousels 1200x1200
+│   │       └── meme_generator.cjs      ← Drake meme for conversational posts
+│   └── threads-post/
+│       └── scripts/
+│           └── visual_generator.cjs    ← Threads visuals 1080x1080
 ├── commands/                ← Claude Code command entry points
 ├── references/              ← add screenshots of posts you like
-├── plans/                   ← editorial plan (auto-generated)
+├── plans/                   ← editorial plan (auto-generated, git-ignored)
 └── setup/                   ← API guides and install scripts
 ```
 
@@ -162,9 +186,19 @@ cp .env.example .env
 | `/linkedin-dm` | Cold DM LinkedIn (2 A/B variants) |
 | `/mockup-to-pdf` | Generate commercial proposal PDF from mockup |
 
+### How visuals work
+
+Visuals are generated with **node-canvas** locally, with no Canva or external tools required. The system uses SF Pro Rounded as the font (included in macOS).
+
+**LinkedIn:** `carousel_generator.cjs` generates slides in `.claude/output/carousel/` and uploads them directly via the LinkedIn API.
+
+**Threads:** The Meta Graph API requires a public URL (not local files). The flow is: generate PNG → upload to Google Drive via Google Drive MCP → get direct URL → publisher.
+
+The `carousel_generator.cjs` has a `SLIDES` section you modify for each post, leaving the render engine intact.
+
 ### Customization
 
-The system is designed to be fully customized per user. The key files to personalize:
+The system is fully customizable. The key files to personalize:
 
 1. **`.claude/context/profile.template.md`** → your identity, tone, topics, funnel strategy
 2. **`.env`** → your API credentials

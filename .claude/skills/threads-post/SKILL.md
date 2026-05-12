@@ -74,14 +74,18 @@ APPROVED → Fase 4 | REJECTED → ri-spawna Writer con feedback
 
 ---
 
-### FASE 4 — VISUAL (Canva MCP — obbligatorio)
+### FASE 4 — VISUAL
 
-Spawna sub-agente con istruzioni in `.claude/agents/04-visual.md`:
-- PLATFORM: Threads
-- FORMAT: immagine singola 1080x1080
-- APPROVED_DRAFT: [draft approvato]
+1. Genera il PNG con `node .claude/skills/threads-post/scripts/visual_generator.cjs`
+   Output: `.claude/output/threads/visual.png`
 
-Per Threads: usa direttamente l'URL pubblico del design Canva esportato (non serve download locale).
+2. Carica il file su Google Drive di Giacomo tramite MCP Google Drive (`mcp__claude_ai_Google_Drive__*`)
+   - Autenticati se necessario
+   - Carica `.claude/output/threads/visual.png`
+   - Imposta visibilità pubblica ("Chiunque con il link")
+   - Ottieni il file ID e costruisci l'URL diretto: `https://drive.google.com/uc?export=view&id=FILE_ID`
+
+3. Passa l'URL diretto al publisher.
 
 ---
 
@@ -127,4 +131,11 @@ NOTE STRATEGICHE
 *Aggiornato automaticamente in caso di errori script.*
 
 <!-- ERRORS_START -->
+
+## 2026-05-12 — Lezioni dalla prima sessione
+
+**Limite 500 caratteri:** l'API Threads restituisce errore 100 se il testo supera 500 caratteri. Il Writer deve tenerlo a mente — max ~480 caratteri per sicurezza (contando anche gli spazi e le newline).
+
+**Google Drive per visual:** l'API Threads richiede URL pubblico per le immagini (non file locali). Flusso confermato: genera PNG con `visual_generator.cjs` → carica su Google Drive via MCP → URL diretto `https://drive.google.com/uc?export=view&id=FILE_ID`.
+
 <!-- ERRORS_END -->

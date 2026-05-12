@@ -47,3 +47,12 @@ __pycache__/
 
 # Settings locali Claude Code
 .claude/settings.local.json
+
+# Output generati — immagini prodotte dagli script visual
+.claude/output/
+
+# Piano editoriale personale
+plans/
+
+# Reference PDF personali
+.claude/references/visuals/**/*.pdf
